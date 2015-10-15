@@ -1,3 +1,5 @@
+# Module to establish a socket endpoint on a free port
+
 import socket
 
 def getsocket(sockettype):
