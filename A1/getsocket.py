@@ -15,7 +15,7 @@ def getsocket(sockettype):
 		portSocket.close()
 
 		try:
-			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s = socket.socket(socket.AF_INET, sockettype)
 			#attempt to bind to port
 			try:
 				s.bind((hostname, port))
