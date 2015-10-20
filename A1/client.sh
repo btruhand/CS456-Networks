@@ -21,7 +21,7 @@
 #java client $1 $2 $3 $4
 
 #For Python implementation
-python client.py $1 $2 $3 "$4"
+python -u client.py $1 $2 $3 "$4"
 
 #For Ruby implementation
 #ruby client.rb $1 $2 $3 $4

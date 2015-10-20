@@ -3,8 +3,10 @@
 import socket
 
 def getsocket(sockettype):
-	#retrieve the IP address of server's machine
-	hostname = socket.gethostbyname(socket.gethostname())
+	# use all the IP address of this machine
+	# including localhost (127.0.0.1) equivalent
+	# to socket.INADDR_ANY
+	hostname = ''
 
 	s = None
 	port = None

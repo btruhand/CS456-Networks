@@ -9,26 +9,33 @@ def incorrectIP():
     sys.stderr.write('Incorrect format of address given. Address should be in IPv4 format\n')
     return False
 
+# argument checking
 def argscheck():
-    if len(sys.argv) != 5:
-        sys.stderr.write('Incorrect number of arguments given to server.\n \
-                          Usage: ./client.sh <server_address> <n_port> <req_code> <message>\n')
-    else:
-        saddr = sys.argv[1]
-        count = 0
-        for ippart in saddr.split('.'):
-            count+= 1
-            if not ippart.isdigit():
-                return incorrectIP()
+	if len(sys.argv) != 5:
+		sys.stderr.write("Incorrect number of arguments given to server.\nUsage: "
+						 "./client.sh <server_address> <n_port> <req_code> <message>\n")
+		return False
+	else:
+		saddr = sys.argv[1]
+		count = 0
+	for ippart in saddr.split('.'):
+		count+= 1
+		if not ippart.isdigit():
+			return incorrectIP()
+		if int(ippart) > 255:
+			return incorrectIP()
 
-        if count != 4:
-            return incorrectIP()
+	if count != 4:
+		return incorrectIP()
 
-        if not (sys.argv[2].isdigit() and sys.argv[3].isdigit()):
-            sys.stderr.write('Given port and request code needs to be an integer\n')
-            return False
+	if not (sys.argv[2].isdigit() and sys.argv[3].isdigit()):
+		sys.stderr.write('Given port and request code needs to be an integer\n')
+		return False
+	if int(sys.argv[2]) > 65535:
+		sys.stder.write('Given port is invalid\n')
+		return False
 
-    return True
+	return True
 
 def client(saddr, nport, reqcode, message):
     #retrieve the IP address of server's machine
@@ -40,7 +47,7 @@ def client(saddr, nport, reqcode, message):
     try:
         clientSocket.connect((saddr, int(nport)))
     except socket.error:
-        sys.stderr.write('Connection to server failed')
+        sys.stderr.write('Connection to server failed\n')
         exit(-1)
     
     # send reqcode to server
@@ -70,8 +77,9 @@ def client(saddr, nport, reqcode, message):
 
     # receive the reversed message through udp socket from server
     reversedMsg = udpreceiver(clientSocket, BUFSIZE)[0]
-
     print 'Reversed message from server:', reversedMsg
+	
+	# close socket
     clientSocket.close()
 
 
