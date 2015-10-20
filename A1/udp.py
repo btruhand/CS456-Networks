@@ -14,15 +14,17 @@ def udpreceiver(socket, bufsize):
     data = ''
     senderaddr = None
     while True:
+        incdata = None
         if data == '':
-            data, senderaddr = socket.recvfrom(bufsize)
+            incdata, senderaddr = socket.recvfrom(bufsize)
         else:
             incdata = socket.recvfrom(bufsize)[0]
-            # if sent data identify the last batch
-            # to send then end loop
-            if incdata == '***':
-                break
-            else:
-                data+= incdata
+        
+        # if sent data identify the last batch
+        # to send then end loop
+        if incdata == '***':
+            break
+        else:
+            data+= incdata
 
     return (data, senderaddr)
