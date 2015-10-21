@@ -77,7 +77,7 @@ def client(saddr, nport, reqcode, message):
 
     # receive the reversed message through udp socket from server
     reversedMsg = udpreceiver(clientSocket, BUFSIZE)[0]
-    print 'Reversed message from server:', reversedMsg
+    print reversedMsg
 	
 	# close socket
     clientSocket.close()

@@ -15,9 +15,6 @@ def server(reqcode):
     #start listening, queue 0 connections because we only have one client at a time
     serverSocket.listen(0)
     
-    # create a UDP socket
-    serverUDP = getsocket(socket.SOCK_DGRAM)
-    r_port = str(serverUDP.getsockname()[1])
 
     while True:
         sys.stderr.write('Accepting Connection...\n')
@@ -33,8 +30,11 @@ def server(reqcode):
             conn.shutdown(1)
             continue
         
+        # create a UDP socket
+        serverUDP = getsocket(socket.SOCK_DGRAM)
+
         # send the port number bound to the UDP socket over to the client
-        conn.sendall(r_port)
+        conn.sendall(str(serverUDP.getsockname()[1]))
        
         # receive the message from client
         sys.stderr.write('Waiting to receive message...\n')
@@ -46,8 +46,9 @@ def server(reqcode):
         sys.stderr.write('Sending reversed message to client...\n')
         udpsender(serverUDP, message, clientaddr)
 
-    # close UDP socket
-    serverUDP.close()
+        # close UDP socket
+        serverUDP.close()
+
     # close TCP connection
     serverSocket.close()
 
