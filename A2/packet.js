@@ -24,11 +24,11 @@ packet.createEOT = function(seqNum) {
 }
 
 packet.parseUDPData = function(UDPdata) {
-	var type = UDPdata.readUInt8(0);
-	var seqnum = UDPdata.readUInt8(1);
-	var length = UDPdata.readUInt32BE(2);
+	var type = UDPdata.readUInt32BE(0);
+	var seqnum = UDPdata.readUInt32BE(4);
+	var length = UDPdata.readUInt32BE(8);
 	// get the data
-	var data = UDPdata.toString('utf8',6,length + 6);
+	var data = UDPdata.toString('utf8',12,length + 12);
 	return new packet(type, seqnum, data);
 };
 
@@ -51,10 +51,10 @@ packet.prototype.getData = function() {
 packet.prototype.getUDPData = function() {
 	var buf = new Buffer(512);
 
-	buf.writeUInt8(this.type, 0);
-	buf.writeUInt8(this.seqNum, 1);
-	buf.writeUInt32BE(this.data.length, 2);
-	buf.write(this.data, 6);
+	buf.writeUInt32BE(this.type, 0);
+	buf.writeUInt32BE(this.seqNum, 4);
+	buf.writeUInt32BE(this.data.length, 8);
+	buf.write(this.data, 12);
 	return buf;
 };
 
