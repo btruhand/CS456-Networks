@@ -34,7 +34,6 @@ var receiverSocket = udp.createSocket('udp4', function(msg, rinfo) {
 	var senderPacket = pack.packet.parseUDPData(msg);
 
 	if(senderPacket.getType() === pack.Data) {
-		console.log('got data, with sequence number' + senderPacket.getSeqNum());
 		// record sequence number from sent packet
 		if(arrivallog.length !== 0) {
 			arrivallog+= '\n';
@@ -42,7 +41,6 @@ var receiverSocket = udp.createSocket('udp4', function(msg, rinfo) {
 		arrivallog = arrivallog + senderPacket.getSeqNum();
 
 		if(senderPacket.getSeqNum() === seqNum) {
-			console.log('yes correct data, sequence number' + seqNum);
 			// yes this is the data I'm expecting
 			try {
 				lastACKpacket = pack.packet.createACK(seqNum).getUDPData();
@@ -72,7 +70,6 @@ var receiverSocket = udp.createSocket('udp4', function(msg, rinfo) {
 			}
 		}
 	} else if(senderPacket.getType() === pack.EOT) {
-		console.log('Yes I received EOT');
 		// this is an EOT packet, send it back since
 		// the sender then must have received all my ACKs
 		// and it's the end of the file being sent
@@ -102,6 +99,5 @@ function exitProcess(ecode) {
 
 function endFunc() {
 	fs.writeFileSync('arrival.log', arrivallog);
-	console.log('Server shutting down...\n');
 	exitProcess(0);
 }

@@ -26,7 +26,6 @@ var streamPaused = false;
 
 function sendEOTPacket() {
 	if(allDataSent) {
-		console.log('EOT being sent');
 		// we've finished sending and received
 		// all the ACKs we need, send EOT packet
 		try {
@@ -43,10 +42,8 @@ function sendEOTPacket() {
 // UDP socket creation and callback registration
 var senderSocket = udp.createSocket('udp4', function(msg, rinfo) {
 	var receiverPacket = pack.packet.parseUDPData(msg);
-	console.log('Expecting sequence number ' + baseWindow);
 	if(receiverPacket.getType() === pack.ACK) {
 		var ACKseqnum = receiverPacket.getSeqNum();
-		console.log('Got ACK with sequence number ' + ACKseqnum);
 		
 		if((ACKseqnum < baseWindow) ||
 			(ACKseqnum > baseWindow && ACKseqnum > seqNum && baseWindowCycled)) {
@@ -116,7 +113,6 @@ var senderSocket = udp.createSocket('udp4', function(msg, rinfo) {
 		fs.writeFileSync('seqnum.log', seqnumlog);
 		fs.writeFileSync('ack.log', acklog);
 
-		console.log('Sender shutting down...\n');
 		exitProcess(0);
 	}
 });
