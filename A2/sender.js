@@ -44,33 +44,7 @@ var senderSocket = udp.createSocket('udp4', function(msg, rinfo) {
 	var receiverPacket = pack.packet.parseUDPData(msg);
 	if(receiverPacket.getType() === pack.ACK) {
 		var ACKseqnum = receiverPacket.getSeqNum();
-		
-		if((ACKseqnum < baseWindow) ||
-			(ACKseqnum > baseWindow && ACKseqnum > seqNum && baseWindowCycled)) {
-			// here ACKseqnum maybe an ACK for a packet older
-			// than the most recent ACKed packet
-			// this may happen if the current packet sequence #
-			// is less than the baseWindow, or if the baseWindow
-			// has wrapped around, then that must mean that
-			// the packet sequence # is greater than the next
-			// sequence # to use or greater than the baseWindow
-			// the next sequence number so long as the baseWindow
-			// has not cycled back so that it is equal to the windowSize 
-			// we simply exit in this case
-			//
-			// here we use the fact that the windowSize is only 10
-			// or generally <= n/2, where n is the size of the sequence number pool
-			return;
-		}
-
 		baseWindow = (ACKseqnum + 1) % pack.packet.seqNumModulo;
-		if(baseWindow === 0) {
-			// baseWindow has cycled
-			baseWindowCycled = true;
-		} else if(baseWindow === windowSize) {
-			// baseWindow cycle period has ended
-			baseWindowCycled = false;
-		}
 
 		if(seqNum === baseWindow) {
 			// stop timer since we've caught up
