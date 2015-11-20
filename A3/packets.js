@@ -1,15 +1,21 @@
+'use strict';
+
 var NBR_ROUTER = 5
 
 var inherit = {
 	getUDPData : function() {
-		properties = Object.getOwnPropertyNames(this).sort();
+		var properties = Object.getOwnPropertyNames(this).sort();
 		// all elements of every packets are unsigned ints
 		// so 4 bytes each
-		buf = new Buffer(properties.length * 4);
+		var buf = new Buffer(properties.length * 4);
 		properties.forEach(function(property, index) {
 			buf.writeUInt32LE(this[property], index * 4);
 		}.bind(this));
 		return buf;
+	},
+	// return length of packet in terms of bytes
+	packetLength: function() {
+		return Object.getOwnPropertyNames(this).length * 4;
 	}
 };
 
@@ -26,6 +32,16 @@ pkt_HELLO.prototype.getRouterID = function() {
 };
 pkt_HELLO.prototype.getLinkID = function() {
 	return this.p2;
+};
+
+// static functions
+pkt_HELLO.packetLength = function() {
+	return 8;
+};
+pkt_HELLO.parseUDPData = function(data) {
+	var router_id = data.readUInt32LE(0);
+	var link_id = data.readUInt32LE(4);
+	return new pkt_HELLO(router_id, link_id);
 };
 
 function pkt_LSPDU(sender, router_id, link_id, cost, via) {
@@ -57,6 +73,19 @@ pkt_LSPDU.prototype.getCost = function() {
 pkt_LSPDU.prototype.getVia = function() {
 	return this.p5;
 };
+
+// static functions
+pkt_LSPDU.packetLength = function() {
+	return 16;
+};
+pkt_LSPDU.parseUDPData = function(data) {
+	var sender = data.readUInt32LE(0);
+	var router_id = data.readUInt32LE(4);
+	var link_id = data.readUInt32LE(8);
+	var cost = data.readUInt32LE(12);
+	var via = data.readUInt32LE(16);
+	return new pkt_LSPDU(sender, router_id, link_id, cost, via);
+}
 
 function pkt_INIT(router_id) {
 	this.rid = router_id;
@@ -92,5 +121,6 @@ module.exports = {
 	pkt_LSPDU : pkt_LSPDU,
 	pkt_INIT : pkt_INIT,
 	link_cost : link_cost,
-	circuit_DB : circuit_DB
+	circuit_DB : circuit_DB,
+	NBR_ROUTER: NBR_ROUTER
 };
