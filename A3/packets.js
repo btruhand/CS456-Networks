@@ -58,6 +58,7 @@ function pkt_LSPDU(sender, router_id, link_id, cost, via) {
 };
 
 pkt_LSPDU.prototype = Object.create(inherit);
+// getters
 pkt_LSPDU.prototype.getSender = function() {
 	return this.p1;
 };
@@ -74,9 +75,19 @@ pkt_LSPDU.prototype.getVia = function() {
 	return this.p5;
 };
 
+// setters
+pkt_LSPDU.prototype.setSender = function(sender) {
+	this.p1 = sender;
+	return this;
+};
+pkt_LSPDU.prototype.setVia = function(via) {
+	this.p5 = via;
+	return this;
+};
+
 // static functions
 pkt_LSPDU.packetLength = function() {
-	return 16;
+	return 20;
 };
 pkt_LSPDU.parseUDPData = function(data) {
 	var sender = data.readUInt32LE(0);
@@ -116,7 +127,7 @@ circuit_DB.parseUDPData = function(UDPData) {
 	return new circuit_DB(nbr_link, linkcost);
 };
 
-module.exports = {
+module.exports = exports = {
 	pkt_HELLO : pkt_HELLO,
 	pkt_LSPDU : pkt_LSPDU,
 	pkt_INIT : pkt_INIT,
