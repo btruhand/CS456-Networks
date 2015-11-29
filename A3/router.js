@@ -83,12 +83,13 @@ function handleLSPDUPacket(data) {
 		if(neighbour !== sender && neighbour !== original_router) {
 			// my neighbour was not the original sender
 			// nor the sender of this package
+			//
+			// indicate that I have sent this LSPDU packet
+			// to this neighbour if I haven't
 			if(!pcs.LSPDUequivalence(neighbourInfo[2], LSPDUpkt)) {
-				// indicate that I have sent this LSPDU packet
-				// to this neighbour
+				// I haven't sent this LS PDU packet to my neighbour
 				neighbourInfo[2].push(LSPDUpkt);
 
-				// I haven't sent this LS PDU packet to my neighbour
 				var LSPDUudp = LSPDUpkt.setSender(routerId).setVia(neighbourInfo[1]).getUDPData();
 				logLSPDUsend(routerId, original_router, link_id, cost, neighbourInfo[1]);
 				routerSocket.send(LSPDUudp, 0, LSPDUudp.length, nsePort, nseAddr);
