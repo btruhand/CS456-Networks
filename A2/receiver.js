@@ -17,6 +17,7 @@ var writefileStream = fs.createWriteStream(writeFilename);
 var streamAvailable = true;
 var writeBuffer = new Array(0);
 
+
 writefileStream.on('drain', function() {
 	// stream is available again
 	streamAvailable = true;
@@ -60,7 +61,7 @@ var receiverSocket = udp.createSocket('udp4', function(msg, rinfo) {
 			}
 
 			// increment sequence number
-			seqNum = (seqNum + 1) % pack.packet.seqNumModulo;
+			seqNum = (seqNum + 1) %	pack.packet.seqNumModulo;
 		} else {
 			// out of order packet
 			if(lastACKpacket !== null) {

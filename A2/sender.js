@@ -55,6 +55,7 @@ var senderSocket = udp.createSocket('udp4', function(msg, rinfo) {
 
 			if(dataBuffer.length > 0) {
 				// saved some data
+				streamPaused = false;
 				timeoutId = setTimeout(timeoutHandler, timeout);
 				var bufLength = dataBuffer.length;
 				for(var i = 0; i < bufLength; i++) {
@@ -68,10 +69,9 @@ var senderSocket = udp.createSocket('udp4', function(msg, rinfo) {
 			timeoutId = setTimeout(timeoutHandler, timeout);
 		}
 
-		if(dataBuffer.length === 0 && streamPaused) {
+		if(dataBuffer.length === 0) {
 			// if all buffered data has been sent
 			// unpause stream if it was paused
-			streamPaused = false;
 			filereadStream.resume();
 		}
 
@@ -129,6 +129,7 @@ function sendData(data) {
 		if(!streamPaused) {
 			// stream not paused? pause it
 			filereadStream.pause();
+			dataBuffer.push(data);
 			streamPaused = true;
 		}
 	}
@@ -158,8 +159,10 @@ function sendData(data) {
 	}
 
 	seqnumlog = seqnumlog + seqNum;
-	// now increment the sequence number
-	seqNum = nextSeqNum;
+	if(!streamPaused) {
+		// now increment the sequence number
+		seqNum = nextSeqNum;
+	}
 }
 
 // register on data read
